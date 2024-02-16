@@ -1,34 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 
-KnightTour knight = new KnightTour();
+knight_64 knight = new knight_64();
 
-Random random = new Random();
-knight.knight_strokes(random.Next(0, 7),random.Next(0, 7),1);
+Random rnd = new Random();
+knight.strokes(rnd.Next(0, 7), rnd.Next(0, 7), 1);
 
-class KnightTour
+class knight_64
 {
-    public static int[] movex = { 1, 2, 2, 1, -1, -2, -2, -1 };
-    public static int[] movey = { 2, 1, -1, -2, -2, -1, 1, 2 };
+    public static int[] dx = { 1, 2, 2, 1, -1, -2, -2, -1 };
+    public static int[] dy = { 2, 1, -1, -2, -2, -1, 1, 2 };
 
-    public static int N = 8; 
+    public static int N = 8;
     public static int[,] board = new int[N, N];
-    
-   
-    public static bool Validity(int x, int y)
+
+
+    public static bool checking(int x, int y)
     {
-        return (x >= 0 && y >= 0 && x < N && y < N && board[x, y] == 0);
+        if (x >= 0 && y >= 0 && x < N && y < N && board[x, y] == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
-    
-    
+
+
     public static int find_min(int x, int y)
     {
         int count = 0;
         for (int i = 0; i < 8; i++)
         {
-            int newx = x + movex[i];
-            int newy = y + movey[i];
-            if (Validity(newx, newy))
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (checking(nx, ny))
             {
                 count++;
             }
@@ -36,60 +43,68 @@ class KnightTour
         return count;
     }
 
-    // Function to perform the Knight's Tour using Warnsdorff's Rule
-    public bool knight_strokes(int x, int y, int moveCount)
+    public bool strokes(int x, int y, int moveCount)
     {
         board[x, y] = moveCount;
         if (moveCount == N * N)
         {
-            visual();
+            Visual();
             return true; // Knight's Tour completed
         }
 
-        
         List<(int, int, int)> possibleMoves = new List<(int, int, int)>();
         for (int i = 0; i < 8; i++)
         {
-            int newX = x + movex[i];
-            int newY = y + movey[i];
-            if (Validity(newX, newY))
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            if (checking(nx, ny))
             {
-                int onwardMoves = find_min(newX, newY);
-                possibleMoves.Add((newX, newY, onwardMoves));
+                int onwardMoves = find_min(nx, ny);
+                possibleMoves.Add((nx, ny, onwardMoves));
             }
-        }
 
-        
+        }
+        Visual();
+
         possibleMoves.Sort((a, b) => a.Item3.CompareTo(b.Item3));
 
-        
         foreach (var move in possibleMoves)
         {
-            int newX = move.Item1;
-            int newY = move.Item2;
-            if (knight_strokes(newX, newY, moveCount + 1))
+            int nx = move.Item1;
+            int ny = move.Item2;
+            if (strokes(nx, ny, moveCount + 1))
             {
                 return true;
             }
+
         }
 
-     
         board[x, y] = 0;
         return false;
     }
 
 
-    public static void visual()
+    public static void Visual()
     {
+        Console.ForegroundColor = ConsoleColor.White;
         for (int i = 0; i < N; i++)
         {
             for (int j = 0; j < N; j++)
             {
-                Console.Write(board[i, j].ToString().PadLeft(3) + " ");
+                if (board[i, j] != 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(board[i, j].ToString().PadLeft(3) + " ");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.Write(board[i, j].ToString().PadLeft(3) + " ");
+                }
             }
             Console.WriteLine();
         }
+        Console.WriteLine();
+        Console.WriteLine();
     }
-
-    
 }
