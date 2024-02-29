@@ -18,8 +18,7 @@ int index_i;
 int index_j;
 
 Console.ForegroundColor = ConsoleColor.White;
-void
-knight_tour (int row, int col)
+void knight_tour (int row, int col)
 {
       a = 9;
       index_i = 4;
