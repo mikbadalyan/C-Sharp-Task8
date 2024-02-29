@@ -1,110 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
+﻿int row = 8;
+int col = 8;
 
-knight_64 knight = new knight_64();
+//Ստեղծում ենք մատրից որի յուրաքանչյուր վանդակ կունենա նշանակված թիվ ոռը կլինի ձիու հավանական քայլերի քանակը։
+int[, ] chessboard = {
+      { 2, 3, 4, 4, 4, 4, 3, 2 }, 
+      { 3, 4, 6, 6, 6, 6, 4, 3 }, 
+      { 4, 6, 8, 8, 8, 8, 6, 4 }, 
+      { 4, 6, 8, 8, 8, 8, 6, 4 },
+      { 4, 6, 8, 8, 8, 8, 6, 4 }, 
+      { 4, 6, 8, 8, 8, 8, 6, 4 }, 
+      { 3, 4, 6, 6, 6, 6, 4, 3 }, 
+      { 2, 3, 4, 4, 4, 4, 3, 2 },
+};
 
-Random rnd = new Random();
-knight.strokes(rnd.Next(0, 7), rnd.Next(0, 7), 1);
+int a;
+int index_i;
+int index_j;
 
-class knight_64
+Console.ForegroundColor = ConsoleColor.White;
+void
+knight_tour (int row, int col)
 {
-    public static int[] dx = { 1, 2, 2, 1, -1, -2, -2, -1 };
-    public static int[] dy = { 2, 1, -1, -2, -2, -1, 1, 2 };
-
-    public static int N = 8;
-    public static int[,] board = new int[N, N];
-
-
-    public static bool checking(int x, int y)
-    {
-        if (x >= 0 && y >= 0 && x < N && y < N && board[x, y] == 0)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-
-    public static int find_min(int x, int y)
-    {
-        int count = 0;
-        for (int i = 0; i < 8; i++)
-        {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            if (checking(nx, ny))
+      a = 9;
+      index_i = 4;
+      index_j = 3;
+      int aa = 0;
+      for (int i = 1; i < 9; i++)
             {
-                count++;
-            }
-        }
-        return count;
-    }
+                  for (int j = 1; j < 9; j++)
+                        {
+                              aa++;
+                              if (chessboard[i - 1, j - 1] == 9)
+                                    {
+                                          Console.ForegroundColor = ConsoleColor.Green;
+                                          Console.Write ("K ");
+                                          Console.ForegroundColor = ConsoleColor.White;
+                                    }
+                              else if ((Math.Abs (row - i) == 2 && Math.Abs (col - j) == 1) || (Math.Abs (row - i) == 1 && Math.Abs (col - j) == 2))
+                                    {
+                                          if (chessboard[i - 1, j - 1] < a)
+                                                {
+                                                      a = chessboard[i - 1, j - 1];
+                                                      index_i = i;
+                                                      index_j = j;
+                                                }
 
-    public bool strokes(int x, int y, int moveCount)
-    {
-        board[x, y] = moveCount;
-        if (moveCount == N * N)
-        {
-            Visual();
-            return true; // Knight's Tour completed
-        }
-
-        List<(int, int, int)> possibleMoves = new List<(int, int, int)>();
-        for (int i = 0; i < 8; i++)
-        {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            if (checking(nx, ny))
-            {
-                int onwardMoves = find_min(nx, ny);
-                possibleMoves.Add((nx, ny, onwardMoves));
+                                          Console.Write (chessboard[i - 1, j - 1] + " ");
+                                    }
+                              else if (row == i && col == j)
+                                    {
+                                          chessboard[i - 1, j - 1] = 9;
+                                          Console.ForegroundColor = ConsoleColor.Green;
+                                          Console.Write ("K ");
+                                          Console.ForegroundColor = ConsoleColor.White;
+                                    }
+                              else
+                                    {
+                                          Console.Write ("0 ");
+                                    }
+                        }
+                  Console.WriteLine ();
+                  if (aa == 8)
+                        {
+                              Console.WriteLine ();
+                              Console.WriteLine ();
+                              Console.WriteLine ();
+                        }
             }
 
-        }
-        Visual();
-
-        possibleMoves.Sort((a, b) => a.Item3.CompareTo(b.Item3));
-
-        foreach (var move in possibleMoves)
-        {
-            int nx = move.Item1;
-            int ny = move.Item2;
-            if (strokes(nx, ny, moveCount + 1))
+      if (a != 9)
             {
-                return true;
+                  knight_tour (index_i, index_j);
             }
-
-        }
-
-        board[x, y] = 0;
-        return false;
-    }
-
-
-    public static void Visual()
-    {
-        Console.ForegroundColor = ConsoleColor.White;
-        for (int i = 0; i < N; i++)
-        {
-            for (int j = 0; j < N; j++)
-            {
-                if (board[i, j] != 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write(board[i, j].ToString().PadLeft(3) + " ");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                else
-                {
-                    Console.Write(board[i, j].ToString().PadLeft(3) + " ");
-                }
-            }
-            Console.WriteLine();
-        }
-        Console.WriteLine();
-        Console.WriteLine();
-    }
 }
+
+knight_tour (row, col);
